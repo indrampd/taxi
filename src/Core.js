@@ -309,7 +309,7 @@ export default class Core {
 			}
 
 			// If the fetched url had a redirect chain, then replace the history to reflect the final resolved URL
-			if (trigger !== 'popstate' && url.href !== entry.finalUrl) {
+			if (trigger !== 'popstate' && url.href !== processUrl(entry.finalUrl).href) {
 				window.history.replaceState({}, '', entry.finalUrl)
 			}
 

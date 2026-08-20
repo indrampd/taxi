@@ -1,55 +1,61 @@
-import Transition from "./Transition"
+import Transition from "./Transition";
 
 export default class Renderer {
 	/**
-	 * @param {{content: HTMLElement|Element, page: Document|Node, title: string, wrapper: Element}} props
+	 * @param {{content: HTMLElement|Element, page: Document|Node, title: string, wrapper: Element, schema?: object}} props
 	 */
-	constructor({ content, page, title, wrapper }) {
-		this._contentString = content.outerHTML
-		this._DOM = null
-		this.page = page
-		this.title = title
-		this.wrapper = wrapper
-		this.content = this.wrapper.lastElementChild
+	constructor({ content, page, title, wrapper, schema }) {
+		this._contentString = content.outerHTML;
+		this._DOM = null;
+		this.page = page;
+		this.title = title;
+		this.wrapper = wrapper;
+		this.schema = schema || { view: "data-taxi-view" };
+		this.content =
+			this.wrapper.querySelector(`[${this.schema.view}]`) ||
+			this.wrapper.lastElementChild;
 	}
 
-	onEnter() {
+	onEnter() {}
 
-	}
+	onEnterCompleted() {}
 
-	onEnterCompleted() {
+	onLeave() {}
 
-	}
-
-	onLeave() {
-
-	}
-
-	onLeaveCompleted() {
-
-	}
+	onLeaveCompleted() {}
 
 	initialLoad() {
-		this.onEnter()
-		this.onEnterCompleted()
+		this.onEnter();
+		this.onEnterCompleted();
 	}
 
-	update() {
-		document.title = this.title
-		this.wrapper.appendChild(this._DOM.firstElementChild)
-		this.content = this.wrapper.lastElementChild
-		this._DOM = null
+	update(siblingAfter = null) {
+		document.title = this.title;
+
+		const newContent = this._DOM.firstElementChild;
+		const parent = (siblingAfter && siblingAfter.parentNode) || this.wrapper._lastParentNode || this.wrapper;
+
+		if (siblingAfter && siblingAfter.parentNode === parent) {
+			parent.insertBefore(newContent, siblingAfter);
+		} else {
+			parent.appendChild(newContent);
+		}
+
+		this.content = newContent;
+		this._DOM = null;
 	}
 
 	createDom() {
 		if (!this._DOM) {
-			this._DOM = document.createElement('div')
-			this._DOM.innerHTML = this._contentString
+			this._DOM = document.createElement("div");
+			this._DOM.innerHTML = this._contentString;
 		}
 	}
 
 	remove() {
-		this.wrapper.firstElementChild.remove()
+		if (this.content && this.wrapper.contains(this.content)) {
+			this.content.remove();
+		}
 	}
 
 	/**
@@ -60,14 +66,13 @@ export default class Renderer {
 	 */
 	enter(transition, trigger) {
 		return new Promise((resolve) => {
-			this.onEnter()
+			this.onEnter();
 
-			transition.enter({ trigger, to: this.content })
-				.then(() => {
-					this.onEnterCompleted()
-					resolve()
-				})
-		})
+			transition.enter({ trigger, to: this.content }).then(() => {
+				this.onEnterCompleted();
+				resolve();
+			});
+		});
 	}
 
 	/**
@@ -79,17 +84,21 @@ export default class Renderer {
 	 */
 	leave(transition, trigger, removeOldContent) {
 		return new Promise((resolve) => {
-			this.onLeave()
+			this.onLeave();
 
-			transition.leave({ trigger, from: this.content })
-				.then(() => {
-					if (removeOldContent) {
-						this.remove()
-					}
+			if (this.content) {
+				this.wrapper._lastParentNode = this.content.parentNode;
+				this.wrapper._lastNextSibling = this.content.nextSibling;
+			}
 
-					this.onLeaveCompleted()
-					resolve()
-				})
-		})
+			transition.leave({ trigger, from: this.content }).then(() => {
+				if (removeOldContent) {
+					this.remove();
+				}
+
+				this.onLeaveCompleted();
+				resolve();
+			});
+		});
 	}
 }

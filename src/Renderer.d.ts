@@ -1,12 +1,13 @@
 export default class Renderer {
-    /**
-     * @param {{content: HTMLElement|Element, page: Document|Node, title: string, wrapper: Element}} props
-     */
-    constructor({ content, page, title, wrapper }: {
+     /**
+      * @param {{content: HTMLElement|Element, page: Document|Node, title: string, wrapper: Element, schema?: object}} props
+      */
+    constructor({ content, page, title, wrapper, schema }: {
         content: HTMLElement | Element;
         page: Document | Node;
         title: string;
         wrapper: Element;
+        schema?: any;
     });
     _contentString: string;
     _DOM: HTMLDivElement;
@@ -19,7 +20,7 @@ export default class Renderer {
     onLeave(): void;
     onLeaveCompleted(): void;
     initialLoad(): void;
-    update(): void;
+    update(siblingAfter?: ChildNode | null): void;
     createDom(): void;
     remove(): void;
     /**

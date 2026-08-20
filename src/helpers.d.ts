@@ -41,3 +41,11 @@ export function appendElement(node: HTMLElement | HTMLStyleElement, elementType:
  * @return {HTMLElement|HTMLStyleElement}
  */
 export function duplicateElement(node: HTMLElement | HTMLStyleElement, elementType: string): HTMLElement | HTMLStyleElement;
+/**
+ * Convert data-attribute format to dataset camelCase key.
+ *
+ * @param {string} attr
+ * @return {string}
+ */
+export function attributeToDataset(attr: string): string;
+

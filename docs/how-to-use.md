@@ -58,8 +58,8 @@ Now when you navigate in your app, `data-taxi-view` will be replaced with the `d
 You can use Taxi via a CDN thanks to the kind folks at unpkg.com. Just be sure to note that the main export is `taxi` with a lowercase t:
 
 ```html
-<script src="https://unpkg.com/@unseenco/e@2.2.2/dist/e.umd.js" crossorigin></script>
-<script src="https://unpkg.com/@unseenco/taxi@1.0.3/dist/taxi.umd.js" crossorigin></script>
+<script src="https://unpkg.com/@unseenco/e@2.5.0/dist/e.umd.js" crossorigin></script>
+<script src="https://unpkg.com/@unseenco/taxi@1.9.1/dist/taxi.umd.js" crossorigin></script>
 
 <main data-taxi>
     <article data-taxi-view>
@@ -91,6 +91,43 @@ const taxi = new Core({ ... })
 ```
 
 Let's look at these in more detail.
+
+### schema `object`
+Allows you to customize the HTML attributes that Taxi searches for. You can provide a custom `prefix` (defaulting to `data-taxi`) or override individual attribute suffixes.
+
+*   `prefix` `string`: The prefix prepended to all attribute keys (default: `"data-taxi"`).
+*   `wrapper` `string`: The attribute suffix used to identify the main wrapper (default: `""`, which maps to the prefix itself, e.g., `data-taxi`).
+*   `view` `string`: The attribute suffix used to identify views and map them to Renderers (default: `"view"`, mapping to `data-taxi-view`).
+*   `ignore` `string`: The attribute suffix on links to exclude them from transitions (default: `"ignore"`, mapping to `data-taxi-ignore`).
+*   `nocache` `string`: The attribute suffix used to bypass caching on specific pages (default: `"nocache"`, mapping to `data-taxi-nocache`).
+*   `reload` `string`: The attribute suffix used to mark scripts/styles for reloading (default: `"reload"`, mapping to `data-taxi-reload`).
+
+Example customizing the prefix:
+```js
+const taxi = new Core({
+    schema: {
+        prefix: 'data-highway'
+    }
+})
+```
+This updates the expected HTML structure to:
+```html
+<main data-highway>
+    <article data-highway-view>
+        ...
+    </article>
+</main>
+```
+
+Example customizing a specific attribute key:
+```js
+const taxi = new Core({
+    schema: {
+        prefix: 'data-taxi',
+        wrapper: 'wrapper' // Maps wrapper to `data-taxi-wrapper`
+    }
+})
+```
 
 ### renderers `Object.<string, Renderer>`
 Please see [Renderers]({{ global.url }}/renderers/) for more information.

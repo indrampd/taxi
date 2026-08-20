@@ -13,6 +13,7 @@
 export default class Core {
     /**
      * @param {{
+     *      schema?: object,
      * 		links?: string,
      * 		removeOldContent?: boolean,
      * 		allowInterruption?: boolean,
@@ -25,6 +26,7 @@ export default class Core {
      * }} parameters
      */
     constructor(parameters?: {
+        schema?: any;
         links?: string;
         removeOldContent?: boolean;
         allowInterruption?: boolean;
@@ -39,6 +41,11 @@ export default class Core {
         reloadJsFilter?: boolean | ((arg0: HTMLElement) => boolean);
         reloadCssFilter?: boolean | ((arg0: HTMLLinkElement) => boolean);
     });
+    schema: any;
+    schemaDataset: {
+        view: string;
+        reload: string;
+    };
     isTransitioning: boolean;
     /**
      * @type {CacheEntry|null}
@@ -206,7 +213,7 @@ export default class Core {
      * @param {string|false} transition
      * @return {Transition|function}
      */
-    private chooseTransition;
+    private chooseTransition(transition: string | false): typeof Transition | Function;
     /**
      * @private
      * @param {Document|Node} page

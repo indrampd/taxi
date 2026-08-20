@@ -73,3 +73,17 @@ export function duplicateElement(node, elementType) {
 
 	return replacement
 }
+
+/**
+ * Convert data-attribute format to dataset camelCase key.
+ *
+ * @param {string} attr
+ * @return {string}
+ */
+export function attributeToDataset(attr) {
+	if (attr.startsWith('data-')) {
+		return attr.slice(5).replace(/-([a-z])/g, (g) => g[1].toUpperCase())
+	}
+	return attr
+}
+

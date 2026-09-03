@@ -17,6 +17,7 @@ export function processUrl(url: string): {
     host: string;
     search: string;
     hasHash: boolean;
+    hash: string;
     pathname: string;
 };
 /**

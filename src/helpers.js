@@ -22,6 +22,7 @@ export function processUrl(url) {
 
 	return {
 		hasHash: details.hash.length > 0,
+		hash: details.hash,
 		pathname: details.pathname.replace(/\/+$/, ''),
 		host: details.host,
 		search: details.search,

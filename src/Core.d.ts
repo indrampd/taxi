@@ -40,7 +40,33 @@ export default class Core {
         };
         reloadJsFilter?: boolean | ((arg0: HTMLElement) => boolean);
         reloadCssFilter?: boolean | ((arg0: HTMLLinkElement) => boolean);
+        updateScroll?: boolean | {
+            reset?: boolean;
+            restore?: boolean;
+            animate?: boolean;
+        };
+        a11y?: boolean | {
+            announce?: boolean;
+            focus?: boolean;
+            announcerMessage?: (title: string) => string;
+            focusTarget?: string | HTMLElement | null;
+        };
+        maxCacheSize?: number;
     });
+    maxCacheSize: number;
+    scrollConfig: {
+        reset: boolean;
+        restore: boolean;
+        animate: boolean;
+    };
+    scrollPositions: Map<string, { x: number; y: number }>;
+    a11yConfig: {
+        announce: boolean;
+        focus: boolean;
+        announcerMessage: (title: string) => string;
+        focusTarget: string | HTMLElement | null;
+    };
+    announcer: HTMLElement | null;
     schema: any;
     schemaDataset: {
         view: string;
@@ -125,6 +151,24 @@ export default class Core {
      */
     clearCache(url?: string): void;
     /**
+     * Sets a cache entry and prunes older entries based on LRU policy.
+     *
+     * @param {string} key
+     * @param {CacheEntry} entry
+     */
+    setCache(key: string, entry: CacheEntry): void;
+    /**
+     * Retrieves a cache entry and marks it as recently used in LRU cache.
+     *
+     * @param {string} key
+     * @return {CacheEntry|undefined}
+     */
+    getCache(key: string): CacheEntry | undefined;
+    /**
+     * Evicts least recently used cache entries when cache size exceeds maxCacheSize.
+     */
+    pruneCache(): void;
+    /**
      * @param {string} url
      * @param {string|false} [transition]
      * @param {string|false|HTMLElement} [trigger]
@@ -152,6 +196,10 @@ export default class Core {
      * @param {any} [callback]
      */
     off(event: string, callback?: any): void;
+    /**
+     * Removes all event listeners and clears the cache.
+     */
+    destroy(): void;
     /**
      * @private
      * @param {{ raw: string, href: string, hasHash: boolean, pathname: string }} url

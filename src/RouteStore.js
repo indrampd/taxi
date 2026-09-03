@@ -43,8 +43,6 @@ export default class RouteStore {
 						return transition
 					}
 				}
-
-				break
 			}
 		}
 

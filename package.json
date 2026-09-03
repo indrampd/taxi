@@ -1,7 +1,7 @@
 {
-	"name": "@unseenco/taxi",
+	"name": "@indrampd/taxi",
 	"description": "A modern page transition library which supports routing, preloading, and additional script reloading.",
-	"version": "1.9.1",
+	"version": "1.10.1",
 	"author": {
 		"name": "Jake Whiteley / Unseen Studio Ltd",
 		"email": "jake@unseen.co",
@@ -9,20 +9,34 @@
 	},
 	"license": "BSD-3-Clause",
 	"source": "src/taxi.js",
-	"main": "src/taxi.js",
-	"umd:main": "./dist/taxi.umd.js",
+	"main": "./dist/taxi.js",
+	"module": "./dist/taxi.esm.js",
+	"unpkg": "./dist/taxi.umd.js",
+	"types": "./dist/taxi.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/taxi.d.ts",
+			"import": "./dist/taxi.modern.js",
+			"module": "./dist/taxi.esm.js",
+			"require": "./dist/taxi.js",
+			"default": "./dist/taxi.modern.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist"
+	],
 	"publishConfig": {
-		"source": "src/taxi.js",
-		"main": "dist/taxi.js"
+		"access": "public"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/craftedbygc/taxi.git"
+		"url": "git+https://github.com/indrampd/taxi.git"
 	},
 	"bugs": {
-		"url": "https://github.com/craftedbygc/taxi/issues"
+		"url": "https://github.com/indrampd/taxi/issues"
 	},
-	"homepage": "https://github.com/craftedbygc/taxi#readme",
+	"homepage": "https://github.com/indrampd/taxi#readme",
 	"contributors": [
 		{
 			"name": "Jake Whiteley",
@@ -42,6 +56,7 @@
 		"cross-env": "^7.0.3",
 		"gsap": "^3.10.2",
 		"html-minifier": "^4.0.0",
+		"jsdom": "^30.0.1",
 		"laravel-mix": "^6.0.41",
 		"markdown-it-anchor": "^8.6.4",
 		"microbundle": "^0.14.2",
@@ -52,16 +67,21 @@
 		"sass": "^1.53.0",
 		"sass-loader": "^12.1.0",
 		"tailwindcss": "^3.1.5",
-		"typescript": "^4.5.5"
+		"typescript": "^4.5.5",
+		"vitest": "^4.1.11"
 	},
 	"scripts": {
 		"build": "microbundle",
 		"ts": "tsc",
+		"prepublishOnly": "npm run ts && npm run build",
 		"start": "npm-run-all -p dev:*",
 		"dev:eleventy": "eleventy --serve --quiet",
 		"dev:mix": "mix watch",
 		"docs": "npm-run-all -p docs:*",
 		"docs:eleventy": "cross-env ENVIRONMENT=prod eleventy",
-		"docs:mix": "mix --production"
+		"docs:mix": "mix --production",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"serve:cdn": "npx serve dist -l 5005 -C"
 	}
 }

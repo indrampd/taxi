@@ -100,6 +100,58 @@ Learn more about [routing]({{ global.url }}/routing/).
 ### 3. Default Transition
 If there was no explicit transition, and no matches from the router, finally the default transition will be used.
 
+## Native CSS View Transitions
+
+Taxi provides first-class integration with the browser's native **View Transitions API** (`document.startViewTransition`) via the `ViewTransition` class:
+
+```js
+import { Core, ViewTransition } from '@unseenco/taxi'
+
+export default class NativeSlideTransition extends ViewTransition {
+  // Optional transition types (supported in modern browsers for @view-transition rules)
+  types = ['slide-left']
+
+  // Hook called right before the view transition begins
+  beforeTransition({ from, trigger }) {
+    // prepare DOM or attributes
+  }
+
+  // Hook called after the native view transition animation completes
+  afterTransition({ to, trigger, transition }) {
+    // cleanup or trigger secondary animations
+  }
+}
+```
+
+Register it just like any other Transition:
+```js
+const taxi = new Core({
+  transitions: {
+    default: NativeSlideTransition,
+  }
+})
+```
+
+### Styling with CSS
+When using `ViewTransition`, transitions can be styled entirely in CSS using standard pseudo-elements:
+
+```css
+::view-transition-old(root) {
+  animation: 300ms ease-out both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 300ms ease-in both fade-in;
+}
+
+/* Morph shared elements between pages */
+.hero-image {
+  view-transition-name: hero;
+}
+```
+
+If a visitor's browser does not yet support `document.startViewTransition`, Taxi automatically performs a clean DOM update and invokes transition hooks without throwing errors.
+
 <div class="border rounded-sm p-4 mt-16">
     <div class="text-sm mb-2 font-bold">What's next:</div>
     <div>

@@ -48,7 +48,7 @@ Then amend your HTML so that `data-taxi` is added  to the parent of the content 
 </main>
 ```
 
-**Please note:** The `data-taxi-view` element **has to be the only child** of `data-taxi`.
+The `data-taxi-view` element can be placed anywhere inside `data-taxi`, allowing flexible nested DOM structures.
 
 
 Now when you navigate in your app, `data-taxi-view` will be replaced with the `data-taxi-view` from the target URL instead of the whole page loading 🥳
@@ -175,6 +175,59 @@ Please see [Reloading JS]({{ global.url }}/reloading-js/) for more information.
 ### reloadCssFilter `bool|function(element: HTMLLinkElement)`
 Please see [Reloading CSS]({{ global.url }}/reloading-css/) for more information.
 
+### updateScroll `boolean|object`
+Controls window scroll management during page transitions.
+* **Default:** `false`. By default, Taxi does not alter window scroll positions. This ensures zero conflicts when paired with smooth scroll libraries such as [Lenis](https://lenis.darkroom.engineering/) or Locomotive Scroll.
+* Pass `true` to enable native scroll restoration and resetting:
+  ```js
+  const taxi = new Core({ updateScroll: true })
+  ```
+* Or pass a configuration object:
+  ```js
+  const taxi = new Core({
+    updateScroll: {
+      reset: true,    // Scroll to top on new navigations
+      restore: true,  // Restore scroll coordinates on popstate (back/forward)
+      animate: false  // Use smooth scrolling ('smooth' vs 'auto')
+    }
+  })
+  ```
+
+### a11y `boolean|object`
+Accessibility management for client-side routing, compliant with WCAG guidelines.
+* **Default:** `true`. Taxi automatically injects an `aria-live="polite"` route announcer to read new page titles to screen reader users, and moves keyboard focus to the first `<h1>` (or the new view container) with `tabindex="-1"`.
+* To customize announcement wording or the focus target:
+  ```js
+  const taxi = new Core({
+    a11y: {
+      announce: true,
+      focus: true,
+      announcerMessage: (title) => `Navigated to ${title}`,
+      focusTarget: '#main-content', // custom selector or HTMLElement
+    }
+  })
+  ```
+* To disable built-in accessibility management:
+  ```js
+  const taxi = new Core({ a11y: false })
+  ```
+
+### maxCacheSize `number`
+Sets the maximum number of pages retained in memory using a Least-Recently-Used (LRU) eviction strategy.
+* **Default:** `12`.
+* Older pages are automatically evicted when new pages are fetched, keeping memory usage bounded while protecting the active page.
+* Set to `0` for unlimited caching:
+  ```js
+  const taxi = new Core({ maxCacheSize: 0 })
+  ```
+
+## Methods
+
+### `destroy()`
+Removes all delegated click listeners, popstate listeners, prefetch listeners, tears down the live route announcer, restores browser history scroll restoration, and clears memory caches:
+```js
+taxi.destroy()
+```
 
 <div class="border rounded-sm p-4 mt-16">
     <div class="text-sm mb-2 font-bold">What's next:</div>
